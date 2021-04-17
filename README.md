@@ -10,11 +10,11 @@ npm run dev
 yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3003](http://localhost:3003) with your browser to see the result.
 
 You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3003/api/hello](http://localhost:3003/api/hello). This endpoint can be edited in `pages/api/hello.js`.
 
 The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
@@ -50,3 +50,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 - `npm install -D @types/styled-components babel-plugin-styled-components`
 - `.babelrc` 추가 및 작성: styled-component를 사용다보면 문자열 안에 스타일이 들어가기 때문
 - `pages/_document.tsx` 수정: SSR에서도 styled-components를 사용하도록 css값 주입
+
+### change port
+
+- port 변경
