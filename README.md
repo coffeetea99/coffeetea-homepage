@@ -32,3 +32,21 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+## Commits
+
+### Initial commit from Create Next App
+
+- `npx create-next-app coffeetea-homepage`
+
+### apply typescript
+
+- `npm install --save-dev typescript @types/react @types/node`
+- 위 패키지 설치하고 서버 실행하면 next가 알아서 다른 파일들 생성함
+- 필요 없는 파일들 삭제
+
+### install styled-components
+- `npm install styled-components`
+- `npm install -D @types/styled-components babel-plugin-styled-components`
+- `.babelrc` 추가 및 작성: styled-component를 사용다보면 문자열 안에 스타일이 들어가기 때문
+- `pages/_document.tsx` 수정: SSR에서도 styled-components를 사용하도록 css값 주입
