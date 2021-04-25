@@ -4,6 +4,8 @@ interface Props {
   title: string;
   date: string;
   screenshots: string[];
+  showEditButton: boolean;
+  onClickEditButton: () => void;
 }
 
 const StyledDiv = styled.div`
@@ -21,11 +23,12 @@ const StyledImg = styled.img`
 function AnimeRow(props: Props) {
   return (
     <>
-      <h3>{props.date} {props.title}</h3>
+      <h3 style={{display: 'inline-block'}} >{props.date} {props.title}</h3>
+      {props.showEditButton && <button style={{display: 'inline-block', marginLeft: '10px'}} onClick={props.onClickEditButton}>edit</button>}
       {
         props.screenshots.length === 0 ? null : 
         <StyledDiv>
-          {props.screenshots.map(url => <StyledImg src={`http://localhost:3009/${url}`} width="360px" />)}
+          {props.screenshots.map(filename => <StyledImg key={filename} src={`http://localhost:3009/image/${filename}`} width="360px" />)}
         </StyledDiv>
       }
     </>
