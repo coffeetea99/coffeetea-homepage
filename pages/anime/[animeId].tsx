@@ -30,7 +30,7 @@ function AnimeEdit() {
         }
       })
       .catch((err) => {
-        console.error('Error on fetching anime list');
+        console.error('Error on fetching anime');
         console.error(err);
       });
   }

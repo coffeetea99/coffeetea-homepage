@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 interface Props {
   onChange: (evt: ChangeEvent<HTMLInputElement>) => void;
+  value?: string;
 }
 
 const StyledInput = styled.input`
@@ -16,7 +17,10 @@ const StyledInput = styled.input`
 
 function DiaryTextInput(props: Props) {
   return (
-    <StyledInput onChange={props.onChange} />
+    <StyledInput
+      onChange={props.onChange}
+      value={props.value}
+    />
   )
 }
 

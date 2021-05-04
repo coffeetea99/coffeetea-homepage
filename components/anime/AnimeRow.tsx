@@ -22,7 +22,7 @@ const StyledImg = styled.img`
 
 function AnimeRow(props: Props) {
   return (
-    <>
+    <div style={{display: 'block'}}>
       <h3 style={{display: 'inline-block'}} >{props.date} {props.title}</h3>
       {props.showEditButton && <button style={{display: 'inline-block', marginLeft: '10px'}} onClick={props.onClickEditButton}>edit</button>}
       {
@@ -31,7 +31,7 @@ function AnimeRow(props: Props) {
           {props.screenshots.map(filename => <StyledImg key={filename} src={`http://localhost:3009/image/${filename}`} width="360px" />)}
         </StyledDiv>
       }
-    </>
+    </div>
   )
 }
 

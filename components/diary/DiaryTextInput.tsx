@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 interface Props {
   onChange: (evt: ChangeEvent<HTMLTextAreaElement>) => void;
+  value?: string;
 }
 
 const StyledTextArea = styled.textarea`
@@ -16,7 +17,10 @@ display: block;
 
 function DiaryTextInput(props: Props) {
   return (
-    <StyledTextArea onChange={props.onChange} />
+    <StyledTextArea
+      onChange={props.onChange}
+      value={props.value}
+    />
   )
 }
 
