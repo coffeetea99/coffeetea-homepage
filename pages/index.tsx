@@ -7,6 +7,8 @@ function Home() {
       <br />
       <a href='/anime'>anime</a>
       <br />
+      <a href='/anisong'>애니송 맞추기</a>
+      <br />
     </>
   );
 }
