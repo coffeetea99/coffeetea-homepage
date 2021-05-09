@@ -22,7 +22,7 @@ function Anime() {
   }, []);
 
   function getAnimeList() {
-    fetch(`http://localhost:3009/anime?startIndex=${startIndex}&count=${count}`)
+    fetch(`${process.env.BACKEND_URL}/anime?startIndex=${startIndex}&count=${count}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error(response.statusText);

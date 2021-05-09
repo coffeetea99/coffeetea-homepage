@@ -16,7 +16,7 @@ function AnisongUpload() {
     const formData = new FormData();
     formData.append('audio', audio);
     formData.append('description', description);
-    fetch("http://localhost:3009/anisong/upload", {
+    fetch(`${process.env.BACKEND_URL}/anisong/upload`, {
       method: 'POST',
       body: formData,
     }).then((response) => {

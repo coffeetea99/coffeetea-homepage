@@ -18,7 +18,7 @@ function DiaryEdit() {
   }, [date]);
 
   function getDiary() {
-    fetch(`http://localhost:3009/diary/${date}`)
+    fetch(`${process.env.BACKEND_URL}/diary/${date}`)
     .then((response) => {
       if (!response.ok) {
         throw new Error(response.statusText);
@@ -49,7 +49,7 @@ function DiaryEdit() {
       newDate: newDate,
       content: content,
     }
-    fetch(`http://localhost:3009/diary/${date}`, {
+    fetch(`${process.env.BACKEND_URL}/diary/${date}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

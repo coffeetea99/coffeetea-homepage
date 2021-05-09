@@ -17,7 +17,7 @@ function Diary() {
   }, []);
 
   function getDiaryList() {
-    fetch("http://localhost:3009/diary")
+    fetch(`${process.env.BACKEND_URL}/diary`)
       .then((response) => {
         if (!response.ok) {
           throw new Error(response.statusText);

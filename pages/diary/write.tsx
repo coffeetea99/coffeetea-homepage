@@ -34,7 +34,7 @@ function WriteDiary() {
       date: date,
       content: content,
     };
-    fetch("http://localhost:3009/diary", {
+    fetch(`${process.env.BACKEND_URL}/diary`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

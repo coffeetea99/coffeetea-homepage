@@ -15,7 +15,7 @@ function AnimeEdit() {
   }, [animeId]);
 
   function getAnime() {
-    fetch(`http://localhost:3009/anime/${animeId}`)
+    fetch(`${process.env.BACKEND_URL}/anime/${animeId}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error(response.statusText);
@@ -40,7 +40,7 @@ function AnimeEdit() {
       date: date,
       title: title,
     }
-    fetch(`http://localhost:3009/anime/${animeId}`, {
+    fetch(`${process.env.BACKEND_URL}/anime/${animeId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

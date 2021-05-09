@@ -38,7 +38,7 @@ function AnimeRecord() {
     }
     formData.append('date', date);
     formData.append('title', title);
-    fetch("http://localhost:3009/anime", {
+    fetch(`${process.env.BACKEND_URL}/anime`, {
       method: 'POST',
       body: formData,
     }).then((response) => {

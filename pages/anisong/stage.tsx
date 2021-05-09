@@ -26,7 +26,7 @@ function AnisongStage() {
       if (track) {
         track.pause();
       }
-      setTrack(new Audio(`http://localhost:3009/${trackList[trackIndex].filename}`));
+      setTrack(new Audio(`${process.env.BACKEND_URL}/${trackList[trackIndex].filename}`));
       setIsPlaying(false);
     }
   }, [trackIndex]);
@@ -42,7 +42,7 @@ function AnisongStage() {
   }, [isPlaying]);
 
   function restartGame() {
-    fetch(`http://localhost:3009/anisong/initialize`, {
+    fetch(`${process.env.BACKEND_URL}/anisong/initialize`, {
       method: 'POST',
     }).then((response) => {
       if (!response.ok) {
@@ -57,7 +57,7 @@ function AnisongStage() {
   }
 
   function getList() {
-    fetch(`http://localhost:3009/anisong/list`)
+    fetch(`${process.env.BACKEND_URL}/anisong/list`)
     .then((response) => {
       if (!response.ok) {
         throw new Error(response.statusText);
