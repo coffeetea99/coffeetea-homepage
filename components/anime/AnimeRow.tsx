@@ -28,7 +28,7 @@ function AnimeRow(props: Props) {
       {
         props.screenshots.length === 0 ? null : 
         <StyledDiv>
-          {props.screenshots.map(filename => <StyledImg key={filename} src={`http://localhost:3009/image/${filename}`} width="360px" />)}
+          {props.screenshots.map(filename => <StyledImg key={filename} src={`http://localhost:3009/${filename}`} width="360px" />)}
         </StyledDiv>
       }
     </div>
