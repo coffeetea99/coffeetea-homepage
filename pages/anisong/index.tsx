@@ -8,6 +8,8 @@ function Anisong() {
       <Link href='/anisong/guide'><a>하는 방법</a></Link>
       <br />
       <Link href='/anisong/stage'><a>시작</a></Link>
+      <br />
+      <Link href='/anisong/participant'><a>참가</a></Link>
     </>
   )
 }

@@ -1,9 +1,14 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 
 interface IAnisong {
   id: number;
   filename: string;
   description: string;
+}
+
+interface IAnisongPoll {
+  id: number;
+  name: string;
 }
 
 function AnisongStage() {
@@ -13,21 +18,32 @@ function AnisongStage() {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
   const [showRestartPopup, setShowRestartPopup] = useState<boolean>(true);
+  const showRestartPopupRef = useRef<boolean>(true);
+
+  const maxPollIndexRef = useRef<number>(0);
+  const [currentPollIndex, setCurrentPollIndex] = useState<number>(0);
+  const [pollList, setPollList] = useState<IAnisongPoll[]>([]);
 
   useEffect(() => {
     getList();
+    const pollInterval = setInterval(getPollList, 1000);
     return(() => {
-      track?.pause();
+      clearInterval(pollInterval);
     })
   }, []);
 
   useEffect(() => {
-    if (trackList.length > 0) {
+    return(() => {
       if (track) {
         track.pause();
+        setIsPlaying(false);
       }
+    })
+  }, [track]);
+
+  useEffect(() => {
+    if (trackList.length > 0) {
       setTrack(new Audio(`${process.env.BACKEND_URL}/${trackList[trackIndex].filename}`));
-      setIsPlaying(false);
     }
   }, [trackIndex]);
 
@@ -41,19 +57,27 @@ function AnisongStage() {
     }
   }, [isPlaying]);
 
-  function restartGame() {
-    fetch(`${process.env.BACKEND_URL}/anisong/initialize`, {
-      method: 'POST',
-    }).then((response) => {
-      if (!response.ok) {
-        throw new Error(response.statusText);
-      }
+  /////
+
+  function restartGame(reset: boolean) {
+    if (reset) {
+      fetch(`${process.env.BACKEND_URL}/anisong/initialize`, {
+        method: 'POST',
+      }).then((response) => {
+        if (!response.ok) {
+          throw new Error(response.statusText);
+        }
+        setShowRestartPopup(false);
+        showRestartPopupRef.current = false;
+      })
+      .catch((err) => {
+        console.error('Error on restarting anisong game');
+        console.error(err);
+      });
+    } else {
       setShowRestartPopup(false);
-    })
-    .catch((err) => {
-      console.error('Error on restarting anisong game');
-      console.error(err);
-    });
+      showRestartPopupRef.current = false;
+    }
   }
 
   function getList() {
@@ -77,12 +101,69 @@ function AnisongStage() {
     });
   }
 
+  // WARNING: this is a function in setInterval
+  function getPollList() {
+    if (showRestartPopupRef.current) return;
+
+    console.log('boo')
+    fetch(`${process.env.BACKEND_URL}/anisong/poll/pull?max_poll_id=${maxPollIndexRef.current}`)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(response.statusText);
+      }
+      return response.json();
+    })
+    .then((response) => {
+      const newPollList: IAnisongPoll[] = response.new_poll_list;
+      console.log(newPollList)
+      if (newPollList.length > 0) {
+        setPollList(currentList => currentList.concat(newPollList));
+        maxPollIndexRef.current += newPollList.length;
+        setIsPlaying(false);
+      }
+    })
+    .catch((err) => {
+      console.error('Error on fetching poll list');
+      console.error(err);
+    });
+  }
+
+  function sayAnswer(correct: boolean) {
+    if (correct) {
+      const data = {
+        name: pollList[currentPollIndex].name,
+      }
+      fetch(`${process.env.BACKEND_URL}/anisong/scoreboard/score`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      }).then((response) => {
+        if (!response.ok) {
+          throw new Error(response.statusText);
+        }
+        setCurrentPollIndex(pollList.length);
+      })
+      .catch((err) => {
+        console.error('Error on adding score');
+        console.error(err);
+      });
+    } else {
+      const increasedPollIndex = currentPollIndex + 1;
+      setCurrentPollIndex(increasedPollIndex);
+      if (increasedPollIndex === pollList.length) {
+        setIsPlaying(true);
+      }
+    }
+  }
+
   return (
     showRestartPopup ? 
     <>
       <h1>새 게임을 시작하겠습니까?</h1> 
-      <button onClick={restartGame}>예</button>
-      <button onClick={() => {setShowRestartPopup(false)}}>아니오</button>
+      <button onClick={restartGame.bind(this, true)}>예</button>
+      <button onClick={restartGame.bind(this, false)}>아니오</button>
     </>
     :
     <>
@@ -93,8 +174,17 @@ function AnisongStage() {
         onClick={() => setIsPlaying(!isPlaying)}
       />
       <br />
+      {currentPollIndex < pollList.length && 
+        <>
+          <h2 >누른 사람: {pollList[currentPollIndex].name}</h2>
+          <br />
+          <button onClick={sayAnswer.bind(this, true)} >맞았습니다</button>
+          <button onClick={sayAnswer.bind(this, false)} >틀렸습니다</button>
+        </>
+      }
       <br />
-      
+      <br />
+      <br />
       <button onClick={() => {setTrackIndex(trackIndex === 0 ? trackList.length - 1 : trackIndex - 1)}} >이전 곡</button>
       <button onClick={() => {setTrackIndex(trackIndex === trackList.length - 1 ? 0 : trackIndex + 1)}} >다음 곡</button>
     </>
