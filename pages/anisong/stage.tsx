@@ -25,10 +25,12 @@ function AnisongStage() {
   const [currentPollIndex, setCurrentPollIndex] = useState<number>(0);
   const [pollList, setPollList] = useState<IAnisongPoll[]>([]);
 
+  const [applicantList, setApplicantList] = useState<string[]>([]);
+
   const [openScoreboard, setOpenScoreboard] = useState<boolean>(false);
 
   useEffect(() => {
-    getList();
+    getAnisongList();
     const pollInterval = setInterval(getPollList, 1000);
     return(() => {
       clearInterval(pollInterval);
@@ -83,7 +85,7 @@ function AnisongStage() {
     }
   }
 
-  function getList() {
+  function getAnisongList() {
     fetch(`${process.env.BACKEND_URL}/anisong/list`)
     .then((response) => {
       if (!response.ok) {
@@ -93,7 +95,7 @@ function AnisongStage() {
     })
     .then((response) => {
       const data: IAnisong[] = response.data;
-      if (data?.length > 0) {
+      if (data.length > 0) {
         setTrackList(data);
         setTrackIndex(0);
       }
@@ -104,6 +106,7 @@ function AnisongStage() {
     });
   }
 
+  /////
   // WARNING: this is a function in setInterval
   function getPollList() {
     if (showRestartPopupRef.current) return;
@@ -151,10 +154,22 @@ function AnisongStage() {
         console.error(err);
       });
     } else {
-      const increasedPollIndex = currentPollIndex + 1;
+      const newApplicantList = [...applicantList, pollList[currentPollIndex].name];
+
+      let increasedPollIndex = currentPollIndex + 1;
+      while(increasedPollIndex < pollList.length) {
+        if (!newApplicantList.includes(pollList[increasedPollIndex].name)) {
+          break;
+        }
+        increasedPollIndex += 1;
+      }
+
       setCurrentPollIndex(increasedPollIndex);
       if (increasedPollIndex === pollList.length) {
+        setApplicantList([]);
         setIsPlaying(true);
+      } else {
+        setApplicantList(newApplicantList)
       }
     }
   }
