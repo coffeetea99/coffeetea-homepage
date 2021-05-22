@@ -14,7 +14,7 @@ interface IAnisongPoll {
 
 function AnisongStage() {
   const [trackList, setTrackList] = useState<IAnisong[]>([]);
-  const [trackIndex, setTrackIndex] = useState<number>(-1);
+  const [trackIndex, setTrackIndex] = useState<number>(null);
   const [track, setTrack] = useState<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
@@ -26,6 +26,9 @@ function AnisongStage() {
   const [pollList, setPollList] = useState<IAnisongPoll[]>([]);
 
   const [applicantList, setApplicantList] = useState<string[]>([]);
+
+  const [isFirstPlay, setIsFirstPlay] = useState<boolean>(true);
+  const inGame = useRef<boolean>(false);
 
   const [openScoreboard, setOpenScoreboard] = useState<boolean>(false);
 
@@ -49,6 +52,7 @@ function AnisongStage() {
   useEffect(() => {
     if (trackList.length > 0) {
       setTrack(new Audio(`${process.env.BACKEND_URL}/${trackList[trackIndex].filename}`));
+      setIsFirstPlay(true);
     }
   }, [trackIndex]);
 
@@ -56,6 +60,10 @@ function AnisongStage() {
     if (track) {
       if (isPlaying) {
         track.play();
+        if (isFirstPlay) {
+          inGame.current = true;
+          setIsFirstPlay(false);
+        }
       } else {
         track.pause();
       }
@@ -119,11 +127,13 @@ function AnisongStage() {
       return response.json();
     })
     .then((response) => {
-      const newPollList: IAnisongPoll[] = response.new_poll_list;
+      const newPollList: IAnisongPoll[] = response.new_poll_list.filter(poll => poll.id > maxPollIndexRef.current);
       if (newPollList.length > 0) {
-        setPollList(currentList => [...currentList, ...newPollList]);
         maxPollIndexRef.current = Math.max(...newPollList.map(poll => poll.id));
-        setIsPlaying(false);
+        if (inGame.current) {
+          setPollList(currentList => [...currentList, ...newPollList]);
+          setIsPlaying(false);
+        }
       }
     })
     .catch((err) => {
@@ -134,6 +144,7 @@ function AnisongStage() {
 
   function sayAnswer(correct: boolean) {
     if (correct) {
+      inGame.current = false;
       const data = {
         name: pollList[currentPollIndex].name,
       }
