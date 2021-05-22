@@ -3,6 +3,7 @@ import Router, { useRouter } from "next/router";
 import DiaryDateInput from "../../components/diary/DiaryDateInput";
 import DiaryTextInput from "../../components/diary/DiaryTextInput";
 import SubmitButton from "../../components/common/SumbitButton";
+import { getAPI, postJsonAPI } from "../../common/util";
 
 function DiaryEdit() {
   const router = useRouter();
@@ -18,23 +19,12 @@ function DiaryEdit() {
   }, [date]);
 
   function getDiary() {
-    fetch(`${process.env.BACKEND_URL}/diary/${date}`)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(response.statusText);
-      }
-      return response.json();
-    })
-    .then((response) => {
+    getAPI<any>(`diary/${date}`, null, 'fetching single diary', (response) => {
       const data = response.data;
       if (data != null) {
         setNewDate(data.date);
         setContent(data.content);
       }
-    })
-    .catch((err) => {
-      console.error('Error on fetching diary');
-      console.error(err);
     });
   }
 
@@ -49,16 +39,7 @@ function DiaryEdit() {
       newDate: newDate,
       content: content,
     }
-    fetch(`${process.env.BACKEND_URL}/diary/${date}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    }).then((response) => {
-      if (!response.ok) {
-        throw new Error(response.statusText);
-      }
+    postJsonAPI(`diary/${date}`, data, 'fixing diary', (response) => {
       Router.push('/diary');
     });
   }

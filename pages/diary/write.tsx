@@ -3,6 +3,7 @@ import Router from 'next/router';
 import DiaryDateInput from "../../components/diary/DiaryDateInput";
 import DiaryTextInput from "../../components/diary/DiaryTextInput";
 import SubmitButton from "../../components/common/SumbitButton";
+import { postJsonAPI } from "../../common/util";
 
 function WriteDiary() {
   const [date, setDate] = useState<string>("");
@@ -34,16 +35,7 @@ function WriteDiary() {
       date: date,
       content: content,
     };
-    fetch(`${process.env.BACKEND_URL}/diary`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    }).then((response) => {
-      if (!response.ok) {
-        throw new Error(response.statusText);
-      }
+    postJsonAPI('diary', data, 'adding diary', (response) => {
       Router.push('/diary');
     });
   }

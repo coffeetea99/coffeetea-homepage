@@ -1,5 +1,6 @@
 import { useState, ChangeEvent } from "react";
 import Router from 'next/router';
+import { postFormDataAPI } from "../../common/util";
 
 function AnisongUpload() {
   const [audio, setAudio] = useState<File>(null);
@@ -16,13 +17,7 @@ function AnisongUpload() {
     const formData = new FormData();
     formData.append('audio', audio);
     formData.append('description', description);
-    fetch(`${process.env.BACKEND_URL}/anisong/upload`, {
-      method: 'POST',
-      body: formData,
-    }).then((response) => {
-      if (!response.ok) {
-        throw new Error(response.statusText);
-      }
+    postFormDataAPI(`anisong/upload`, formData, 'uploading anisong', (response) => {
       Router.reload();
     });
   }

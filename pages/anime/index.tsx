@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Router from 'next/router';
 import Link from 'next/link';
 import AnimeRow from '../../components/anime/AnimeRow';
+import { getAPI } from "../../common/util";
 
 interface IAnimeWithScreenshot {
   id: number;
@@ -22,24 +23,13 @@ function Anime() {
   }, []);
 
   function getAnimeList() {
-    fetch(`${process.env.BACKEND_URL}/anime?startIndex=${startIndex}&count=${count}`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(response.statusText);
-        }
-        return response.json();
-      })
-      .then((response) => {
-        const data = response.data;
-        if (data?.length > 0) {
-          setAnimeList([...animeList, ...data]);
-          setStartIndex(startIndex + count);
-        }
-      })
-      .catch((err) => {
-        console.error('Error on fetching anime list');
-        console.error(err);
-      });
+    getAPI<any>('anime', { startIndex: startIndex, count: count }, 'fetching anime list', (response) => {
+      const data = response.data;
+      if (data?.length > 0) {
+        setAnimeList([...animeList, ...data]);
+        setStartIndex(startIndex + count);
+      }
+    });
   }
 
   function onClickEditButton(animeId: number) {

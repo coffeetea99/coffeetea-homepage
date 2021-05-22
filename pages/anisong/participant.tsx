@@ -1,4 +1,5 @@
 import React, { useState, ChangeEvent } from "react"
+import { postJsonAPI } from "../../common/util";
 
 function AnisongParticipant() {
   const [showWriteDownNamePopup, setShowWriteDownNamePopup] = useState<boolean>(true);
@@ -8,22 +9,8 @@ function AnisongParticipant() {
     const data = {
       name: name,
     }
-    fetch(`${process.env.BACKEND_URL}/anisong/scoreboard/add`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(response.statusText);
-      }
-      setShowWriteDownNamePopup(false)
-    })
-    .catch((err) => {
-      console.error('Error on adding name on scoreboard');
-      console.error(err);
+    postJsonAPI('anisong/scoreboard/add', data, 'adding name on scoreboard', (response) => {
+      setShowWriteDownNamePopup(false);
     });
   }
 
@@ -31,22 +18,7 @@ function AnisongParticipant() {
     const data = {
       name: name,
     }
-    fetch(`${process.env.BACKEND_URL}/anisong/poll/add`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(response.statusText);
-      }
-    })
-    .catch((err) => {
-      console.error('Error on adding poll');
-      console.error(err);
-    });
+    postJsonAPI(`anisong/poll/add`, data, 'adding poll', (response) => {});
   }
 
   return (

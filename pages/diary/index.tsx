@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Router from 'next/router';
 import Link from 'next/link';
 import DiaryRow from "../../components/diary/DiaryRow";
+import { getAPI } from "../../common/util";
 
 interface Diary {
   date: string;
@@ -17,21 +18,10 @@ function Diary() {
   }, []);
 
   function getDiaryList() {
-    fetch(`${process.env.BACKEND_URL}/diary`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(response.statusText);
-        }
-        return response.json();
-      })
-      .then((response) => {
-        const data = response.data
-        setDiaryList(data);
-      })
-      .catch((err) => {
-        console.error('Error on fetching diary list');
-        console.error(err);
-      });
+    getAPI<any>(`diary`, null, 'fetching diary list', (response) => {
+      const data = response.data
+      setDiaryList(data);
+    });
   }
 
   function onClickEditButton(date: string) {

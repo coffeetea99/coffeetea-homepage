@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled, { keyframes, css } from 'styled-components';
+import { getAPI } from '../../common/util';
 
 interface Props {
   header: string;
@@ -112,19 +113,8 @@ const AnisongScoreboard: React.FC<Props> = (props) => {
 
     useEffect(() => {
       if (isOpen) {
-        fetch(`${process.env.BACKEND_URL}/anisong/scoreboard/list`)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(response.statusText);
-          }
-          return response.json();
-        })
-        .then((response) => {
+        getAPI<any>(`anisong/scoreboard/list`, null, 'adding score', (response) => {
           setScoreboard(response.scoreboard_list);
-        })
-        .catch((err) => {
-          console.error('Error on adding score');
-          console.error(err);
         });
       }
     }, [isOpen])

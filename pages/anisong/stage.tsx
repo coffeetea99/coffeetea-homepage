@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react"
+import { getAPI, postJsonAPI } from "../../common/util";
 import AnisongScoreboard from '../../components/anisong/AnisongScoreboard';
 
 interface IAnisong {
@@ -74,18 +75,9 @@ function AnisongStage() {
 
   function restartGame(reset: boolean) {
     if (reset) {
-      fetch(`${process.env.BACKEND_URL}/anisong/initialize`, {
-        method: 'POST',
-      }).then((response) => {
-        if (!response.ok) {
-          throw new Error(response.statusText);
-        }
+      postJsonAPI('anisong/initialize', {}, 'restarting anisong game', (response) => {
         setShowRestartPopup(false);
         showRestartPopupRef.current = false;
-      })
-      .catch((err) => {
-        console.error('Error on restarting anisong game');
-        console.error(err);
       });
     } else {
       setShowRestartPopup(false);
@@ -94,23 +86,12 @@ function AnisongStage() {
   }
 
   function getAnisongList() {
-    fetch(`${process.env.BACKEND_URL}/anisong/list`)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(response.statusText);
-      }
-      return response.json();
-    })
-    .then((response) => {
+    getAPI<any>('anisong/list', null, 'fetching anisong list', (response) => {
       const data: IAnisong[] = response.data;
       if (data.length > 0) {
         setTrackList(data);
         setTrackIndex(0);
       }
-    })
-    .catch((err) => {
-      console.error('Error on fetching anisong list');
-      console.error(err);
     });
   }
 
@@ -119,14 +100,7 @@ function AnisongStage() {
   function getPollList() {
     if (showRestartPopupRef.current) return;
 
-    fetch(`${process.env.BACKEND_URL}/anisong/poll/pull?max_poll_id=${maxPollIndexRef.current}`)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(response.statusText);
-      }
-      return response.json();
-    })
-    .then((response) => {
+    getAPI<any>('anisong/poll/pull', { max_poll_id: maxPollIndexRef.current }, 'fetching poll list', (response) => {
       const newPollList: IAnisongPoll[] = response.new_poll_list.filter(poll => poll.id > maxPollIndexRef.current);
       if (newPollList.length > 0) {
         maxPollIndexRef.current = Math.max(...newPollList.map(poll => poll.id));
@@ -135,10 +109,6 @@ function AnisongStage() {
           setIsPlaying(false);
         }
       }
-    })
-    .catch((err) => {
-      console.error('Error on fetching poll list');
-      console.error(err);
     });
   }
 
@@ -148,21 +118,8 @@ function AnisongStage() {
       const data = {
         name: pollList[currentPollIndex].name,
       }
-      fetch(`${process.env.BACKEND_URL}/anisong/scoreboard/score`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      }).then((response) => {
-        if (!response.ok) {
-          throw new Error(response.statusText);
-        }
+      postJsonAPI(`anisong/scoreboard/score`, data, 'adding score', (response) => {
         setCurrentPollIndex(pollList.length);
-      })
-      .catch((err) => {
-        console.error('Error on adding score');
-        console.error(err);
       });
     } else {
       const newApplicantList = [...applicantList, pollList[currentPollIndex].name];

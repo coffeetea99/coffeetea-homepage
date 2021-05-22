@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Router, { useRouter } from "next/router";
+import { getAPI, postJsonAPI } from "../../common/util";
 
 function AnimeEdit() {
   const router = useRouter();
@@ -15,24 +16,13 @@ function AnimeEdit() {
   }, [animeId]);
 
   function getAnime() {
-    fetch(`${process.env.BACKEND_URL}/anime/${animeId}`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(response.statusText);
-        }
-        return response.json();
-      })
-      .then((response) => {
-        const data = response.data;
-        if (data != null) {
-          setDate(data.date);
-          setTitle(data.title);
-        }
-      })
-      .catch((err) => {
-        console.error('Error on fetching anime');
-        console.error(err);
-      });
+    getAPI<any>(`anime/${animeId}`, null, 'getting single anime', (response) => {
+      const data = response.data;
+      if (data != null) {
+        setDate(data.date);
+        setTitle(data.title);
+      }
+    });
   }
 
   function updateAnime() {
@@ -40,16 +30,7 @@ function AnimeEdit() {
       date: date,
       title: title,
     }
-    fetch(`${process.env.BACKEND_URL}/anime/${animeId}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    }).then((response) => {
-      if (!response.ok) {
-        throw new Error(response.statusText);
-      }
+    postJsonAPI(`anime/${animeId}`, data, 'updating anime', (response) => {
       Router.push('/anime');
     });
   }

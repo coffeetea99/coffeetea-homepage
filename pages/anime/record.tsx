@@ -1,5 +1,6 @@
 import { useState, ChangeEvent } from "react";
 import Router from 'next/router';
+import { postFormDataAPI } from "../../common/util";
 
 function AnimeRecord() {
   const [date, setDate] = useState<string>("");
@@ -38,13 +39,7 @@ function AnimeRecord() {
     }
     formData.append('date', date);
     formData.append('title', title);
-    fetch(`${process.env.BACKEND_URL}/anime`, {
-      method: 'POST',
-      body: formData,
-    }).then((response) => {
-      if (!response.ok) {
-        throw new Error(response.statusText);
-      }
+    postFormDataAPI(`anime`, formData, 'adding anime', (response) => {
       Router.push('/anime');
     });
   }
